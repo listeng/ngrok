@@ -48,3 +48,18 @@ ngrok.com ran a pay-what-you-want hosted service of 1.x from early 2013 until Ap
 
 ## Developing on ngrok
 [ngrok developer's guide](docs/DEVELOPMENT.md)
+
+## Generate TLS files
+
+```Bash
+export NG_DOMAIN=*.ngrok.com
+export SERVER_CRT=assets/server/tls/
+export CLIENT_CRT=assets/client/tls/
+openssl genrsa -out $CLIENT_CRT/ngrokroot.key 2048
+openssl req -x509 -new -nodes -key $CLIENT_CRT/ngrokroot.key -subj "/CN=$NG_DOMAIN" -days 5000 -out $CLIENT_CRT/ngrokroot.crt
+openssl genrsa -out $SERVER_CRT/snakeoil.key 2048
+openssl req -new -key $SERVER_CRT/snakeoil.key -subj "/CN=$NG_DOMAIN" -out server.csr
+openssl x509 -req -in server.csr -CA $CLIENT_CRT/ngrokroot.crt -CAkey $CLIENT_CRT/ngrokroot.key -CAcreateserial -out $SERVER_CRT/snakeoil.crt -days 5000
+rm server.csr
+
+```

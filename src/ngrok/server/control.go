@@ -82,6 +82,11 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 		ctlConn.Close()
 	}
 
+	if authMsg.User != opts.authtoken {
+		failAuth(fmt.Errorf("authtoken error!"))
+		return
+	}
+
 	// register the clientid
 	c.id = authMsg.ClientId
 	if c.id == "" {
