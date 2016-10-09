@@ -1,17 +1,14 @@
-.PHONY: default server client deps fmt clean all release-all assets client-assets server-assets contributors
+.PHONY: default server client deps clean all release-all assets client-assets server-assets contributors
 #export GOPATH:=$(shell pwd)
 
 BUILDTAGS=debug
 default: all
 
 deps: assets
-	go get -tags '$(BUILDTAGS)' -d -v github.com/listeng/ngrok/...
+	go get -tags '$(BUILDTAGS)' -d -v ngrok/...
 
 server: deps
 	go install -tags '$(BUILDTAGS)' ngrok/main/ngrokd
-
-fmt:
-	go fmt ngrok/...
 
 client: deps
 	go install -tags '$(BUILDTAGS)' ngrok/main/ngrok
@@ -39,9 +36,9 @@ release-client: client
 release-server: BUILDTAGS=release
 release-server: server
 
-release-all: fmt release-client release-server
+release-all: release-client release-server
 
-all: fmt client server
+all: client server
 
 clean:
 	go clean -i -r ngrok/...
