@@ -16,10 +16,10 @@ import (
 	"time"
 )
 
-var defaultPortMap = map[string]int{
-	"http":  80,
-	"https": 443,
-	"smtp":  25,
+var defaultPortMap = map[string] []int {
+	"http":  []int {80, 888},
+	"https": []int {443, 8443},
+	"smtp":  []int {25},
 }
 
 /**
@@ -62,9 +62,11 @@ func registerVhost(t *Tunnel, protocol string, servingPort int) (err error) {
 		return fmt.Errorf("Couldn't find default port for protocol %s", protocol)
 	}
 
-	defaultPortSuffix := fmt.Sprintf(":%d", defaultPort)
-	if strings.HasSuffix(vhost, defaultPortSuffix) {
-		vhost = vhost[0 : len(vhost)-len(defaultPortSuffix)]
+	for _, vport := range defaultPort {
+		defaultPortSuffix := fmt.Sprintf(":%d", vport)
+		if strings.HasSuffix(vhost, defaultPortSuffix) {
+			vhost = vhost[0 : len(vhost)-len(defaultPortSuffix)]
+		}
 	}
 
 	// Canonicalize by always using lower-case
